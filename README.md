@@ -41,4 +41,3 @@ Just use pacman repository.
 
     $ cd pacman-repo
     $ git submodule foreach 'git pull origin master'
-    $ git submodule update
