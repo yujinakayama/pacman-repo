@@ -1,0 +1,3 @@
+[submodule "pkgbuilds"]
+	path = pkgbuilds
+	url = git://github.com/yujinakayama/pkgbuilds.git
