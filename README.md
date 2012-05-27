@@ -35,3 +35,10 @@ Just use pacman repository.
     $ cd pacman-repo
     $ git add repo
     $ git push
+
+
+### Update pkgbuilds submodule
+
+    $ cd pacman-repo
+    $ git submodule foreach 'git pull origin master'
+    $ git submodule update
