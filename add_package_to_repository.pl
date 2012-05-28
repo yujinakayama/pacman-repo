@@ -43,22 +43,32 @@ sub addPackageToRepository {
 
     my $packageFileName = basename($packagePath);
     my ($architecture) = $packageFileName =~ /([^-]+).pkg.tar.xz$/;
-    my $repositoryPath = "$config->{repoDir}/$architecture";
-    unless (-d $repositoryPath) {
-        make_path $repositoryPath;
+
+    my @repositoryPaths;
+    if ($architecture eq 'any') {
+        push(@repositoryPaths, "$config->{repoDir}/i686");
+        push(@repositoryPaths, "$config->{repoDir}/x86_64");
+    } else {
+        push(@repositoryPaths, "$config->{repoDir}/$architecture");
     }
 
-    move $packagePath, $repositoryPath;
+    foreach my $repositoryPath (@repositoryPaths) {
+        unless (-d $repositoryPath) {
+            make_path $repositoryPath;
+        }
 
-    my $repositoryDatabasePath = "$repositoryPath/$config->{repoName}.db.tar.gz";
-    my $placedPackagePath = "$repositoryPath/$packageFileName";
-    system "repo-add $repositoryDatabasePath $placedPackagePath";
+        copy $packagePath, $repositoryPath;
 
-    # repo-add generates REPO_NAME.db.tar.gz and make symlink REPO_NAME.db which refers the former.
-    # pacman refers REPO_NAME.db via HTTP,
-    # but web interface of Github returns just path of symlink.
-    # So we need to replace symlink with copy.
-    replaceSymlinkWithCopy("$repositoryPath/$config->{repoName}.db")
+        my $repositoryDatabasePath = "$repositoryPath/$config->{repoName}.db.tar.gz";
+        my $placedPackagePath = "$repositoryPath/$packageFileName";
+        system "repo-add $repositoryDatabasePath $placedPackagePath";
+
+        # repo-add generates REPO_NAME.db.tar.gz and make symlink REPO_NAME.db which refers the former.
+        # pacman refers REPO_NAME.db via HTTP,
+        # but web interface of Github returns just path of symlink.
+        # So we need to replace symlink with copy.
+        replaceSymlinkWithCopy("$repositoryPath/$config->{repoName}.db")
+    }
 }
 
 sub replaceSymlinkWithCopy {
