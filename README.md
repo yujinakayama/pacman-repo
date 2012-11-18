@@ -4,7 +4,7 @@ Usage
 Register pacman repository
 ---------------------
 
-    # cat > /etc/pacman.conf
+    # cat >> /etc/pacman.conf
     
     [yujinakayama]
     Server = https://raw.github.com/yujinakayama/pacman-repo/master/repo/$arch
